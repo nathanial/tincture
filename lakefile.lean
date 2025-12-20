@@ -6,4 +6,4 @@ package tincture where
 
 @[default_target]
 lean_lib Tincture where
-  roots := #[`Tincture]
+  globs := #[.submodules `Tincture]
