@@ -9,7 +9,7 @@ import TinctureTests.BlendTests
 import TinctureTests.ContrastTests
 import TinctureTests.HarmonyTests
 import TinctureTests.ParseFormatTests
-import TinctureTests.PropertyTests
+import TinctureTests.PropertyTests  -- Plausible tests run at compile time via #test
 import Crucible
 
 open Crucible
@@ -27,10 +27,11 @@ def main : IO UInt32 := do
   if (← runTests "WCAG Contrast" TinctureTests.ContrastTests.cases) != 0 then failed := true
   if (← runTests "Color Harmony" TinctureTests.HarmonyTests.cases) != 0 then failed := true
   if (← runTests "Parse/Format" TinctureTests.ParseFormatTests.cases) != 0 then failed := true
-  if (← runTests "Properties" TinctureTests.PropertyTests.cases) != 0 then failed := true
+  -- PropertyTests uses Plausible #test (runs at compile time)
 
   IO.println ""
   IO.println "============================"
+  IO.println "(Property tests with Plausible run during compilation)"
 
   if failed then
     IO.println "Some tests failed!"

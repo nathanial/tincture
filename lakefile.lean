@@ -7,6 +7,9 @@ package tincture where
 require crucible from git
   "https://github.com/nathanial/crucible.git" @ "master"
 
+require plausible from git
+  "https://github.com/leanprover-community/plausible.git" @ "v4.26.0"
+
 @[default_target]
 lean_lib Tincture where
   roots := #[`Tincture]
