@@ -4,6 +4,7 @@
 -/
 
 import Tincture.Color
+import Tincture.Adjust
 import Tincture.Space.HSL
 import Tincture.Space.OkLCH
 
@@ -21,12 +22,6 @@ inductive HarmonyType where
 deriving Repr, BEq, Inhabited
 
 namespace Color
-
-/-- Rotate hue in HSL space by given amount (0-1 = 0-360 degrees). -/
-def rotateHue (c : Color) (amount : Float) : Color :=
-  let hsl := HSL.fromColor c
-  let h' := (hsl.h + amount) - (hsl.h + amount).floor
-  HSL.toColor ⟨h', hsl.s, hsl.l⟩ c.a
 
 /-- Get the complementary color (opposite on color wheel). -/
 def complementary (c : Color) : Color :=
