@@ -21,8 +21,9 @@ private def parseHexByte (s : String) (offset : Nat) : Option UInt8 := do
   if offset + 1 >= s.length then
     failure
   else
-    let hi ← hexDigitValue (s.get ⟨offset⟩)
-    let lo ← hexDigitValue (s.get ⟨offset + 1⟩)
+    let chars := s.toList
+    let hi ← hexDigitValue chars[offset]!
+    let lo ← hexDigitValue chars[offset + 1]!
     return hi * 16 + lo
 
 /-- Parse a single hex character as a doubled byte (e.g., 'F' -> 0xFF). -/
@@ -30,7 +31,7 @@ private def parseHexNibble (s : String) (offset : Nat) : Option UInt8 := do
   if offset >= s.length then
     failure
   else
-    let v ← hexDigitValue (s.get ⟨offset⟩)
+    let v ← hexDigitValue s.toList[offset]!
     return v * 16 + v
 
 /-- Parse color from hex string.

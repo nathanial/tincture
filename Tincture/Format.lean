@@ -10,12 +10,14 @@ namespace Tincture
 
 namespace Color
 
+/-- Hex digit characters for conversion. -/
+private def hexDigits : List Char := "0123456789abcdef".toList
+
 /-- Convert a byte to two hex characters. -/
 private def toHexByte (v : UInt8) : String :=
-  let hexChars := "0123456789abcdef"
   let hi := (v / 16).toNat
   let lo := (v % 16).toNat
-  String.singleton (hexChars.get! ⟨hi⟩) ++ String.singleton (hexChars.get! ⟨lo⟩)
+  String.singleton hexDigits[hi]! ++ String.singleton hexDigits[lo]!
 
 /-- Convert color to hex string.
     format: "#RRGGBB" or "#RRGGBBAA" if includeAlpha is true. -/
@@ -31,8 +33,7 @@ def toHexShort (c : Color) (includeAlpha : Bool := false) : String :=
   let canShorten (v : UInt8) : Bool := (v / 16) == (v % 16)
   if canShorten r && canShorten g && canShorten b && (!includeAlpha || canShorten a) then
     let toSingle (v : UInt8) : String :=
-      let hexChars := "0123456789abcdef"
-      String.singleton (hexChars.get! ⟨(v / 16).toNat⟩)
+      String.singleton hexDigits[(v / 16).toNat]!
     let short := "#" ++ toSingle r ++ toSingle g ++ toSingle b
     if includeAlpha then short ++ toSingle a else short
   else
