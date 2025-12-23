@@ -10,19 +10,15 @@ namespace TinctureTests.ContrastTests
 open Crucible
 open Tincture
 
-/-- Helper to check if two floats are approximately equal. -/
-def approxEq (a b : Float) (epsilon : Float := 0.01) : Bool :=
-  Float.abs (a - b) < epsilon
-
 testSuite "Relative Luminance"
 
 test "white has luminance 1" := do
   let lum := Color.relativeLuminance Color.white
-  ensure (approxEq lum 1.0) "white luminance should be 1"
+  ensure (floatNear lum 1.0 0.01) "white luminance should be 1"
 
 test "black has luminance 0" := do
   let lum := Color.relativeLuminance Color.black
-  ensure (approxEq lum 0.0) "black luminance should be 0"
+  ensure (floatNear lum 0.0 0.01) "black luminance should be 0"
 
 test "luminance is always in [0, 1]" := do
   let colors := #[Color.red, Color.green, Color.blue, Color.yellow, Color.cyan]
@@ -39,20 +35,20 @@ testSuite "Contrast Ratio"
 
 test "black on white has maximum contrast" := do
   let ratio := Color.contrastRatio Color.black Color.white
-  ensure (approxEq ratio 21.0) "black/white ratio should be 21"
+  ensure (floatNear ratio 21.0 0.01) "black/white ratio should be 21"
 
 test "white on black has maximum contrast" := do
   let ratio := Color.contrastRatio Color.white Color.black
-  ensure (approxEq ratio 21.0) "white/black ratio should be 21"
+  ensure (floatNear ratio 21.0 0.01) "white/black ratio should be 21"
 
 test "same color has minimum contrast" := do
   let ratio := Color.contrastRatio Color.red Color.red
-  ensure (approxEq ratio 1.0) "same color ratio should be 1"
+  ensure (floatNear ratio 1.0 0.01) "same color ratio should be 1"
 
 test "contrast ratio is symmetric" := do
   let ratio1 := Color.contrastRatio Color.red Color.blue
   let ratio2 := Color.contrastRatio Color.blue Color.red
-  ensure (approxEq ratio1 ratio2) "contrast should be symmetric"
+  ensure (floatNear ratio1 ratio2 0.01) "contrast should be symmetric"
 
 test "contrast ratio is always >= 1" := do
   let colors := #[Color.red, Color.green, Color.blue, Color.gray 0.3, Color.gray 0.7]
@@ -172,7 +168,7 @@ test "white on black has high APCA contrast" := do
 
 test "same color has zero APCA contrast" := do
   let contrast := Color.apcaContrast (Color.gray 0.5) (Color.gray 0.5)
-  ensure (approxEq contrast 0.0 1.0) "same color should have ~0 APCA"
+  ensure (floatNear contrast 0.0 1.0) "same color should have ~0 APCA"
 
 #generate_tests
 

@@ -10,15 +10,11 @@ namespace TinctureTests.ParseFormatTests
 open Crucible
 open Tincture
 
-/-- Helper to check if two floats are approximately equal. -/
-def approxEq (a b : Float) (epsilon : Float := 0.01) : Bool :=
-  Float.abs (a - b) < epsilon
-
 /-- Helper to check if two colors are approximately equal. -/
 def colorApproxEq (c1 c2 : Color) (epsilon : Float := 0.01) : Bool :=
-  approxEq c1.r c2.r epsilon &&
-  approxEq c1.g c2.g epsilon &&
-  approxEq c1.b c2.b epsilon
+  floatNear c1.r c2.r epsilon &&
+  floatNear c1.g c2.g epsilon &&
+  floatNear c1.b c2.b epsilon
 
 /-- Helper to check if a string contains a substring. -/
 def containsSubstr (s : String) (sub : String) : Bool :=
@@ -29,34 +25,34 @@ testSuite "Hex Parsing"
 test "parse #RRGGBB format" := do
   match Color.fromHex "#ff8000" with
   | some c =>
-    ensure (approxEq c.r 1.0) "r should be 1.0"
-    ensure (approxEq c.g 0.502) "g should be ~0.502"
-    ensure (approxEq c.b 0.0) "b should be 0.0"
+    ensure (floatNear c.r 1.0 0.01) "r should be 1.0"
+    ensure (floatNear c.g 0.502 0.01) "g should be ~0.502"
+    ensure (floatNear c.b 0.0 0.01) "b should be 0.0"
   | none => ensure false "parsing failed"
 
 test "parse RRGGBB without #" := do
   match Color.fromHex "ff8000" with
-  | some c => ensure (approxEq c.r 1.0) "r should be 1.0"
+  | some c => ensure (floatNear c.r 1.0 0.01) "r should be 1.0"
   | none => ensure false "parsing failed"
 
 test "parse #RGB short format" := do
   match Color.fromHex "#f80" with
   | some c =>
-    ensure (approxEq c.r 1.0) "r should be 1.0"
-    ensure (approxEq c.g 0.533) "g should be ~0.533"
-    ensure (approxEq c.b 0.0) "b should be 0.0"
+    ensure (floatNear c.r 1.0 0.01) "r should be 1.0"
+    ensure (floatNear c.g 0.533 0.01) "g should be ~0.533"
+    ensure (floatNear c.b 0.0 0.01) "b should be 0.0"
   | none => ensure false "parsing failed"
 
 test "parse #RRGGBBAA format" := do
   match Color.fromHex "#ff800080" with
   | some c =>
-    ensure (approxEq c.r 1.0) "r should be 1.0"
-    ensure (approxEq c.a 0.502) "a should be ~0.502"
+    ensure (floatNear c.r 1.0 0.01) "r should be 1.0"
+    ensure (floatNear c.a 0.502 0.01) "a should be ~0.502"
   | none => ensure false "parsing failed"
 
 test "parse uppercase hex" := do
   match Color.fromHex "#FF8000" with
-  | some c => ensure (approxEq c.r 1.0) "r should be 1.0"
+  | some c => ensure (floatNear c.r 1.0 0.01) "r should be 1.0"
   | none => ensure false "parsing failed"
 
 test "parse black" := do
@@ -80,29 +76,29 @@ testSuite "RGB String Parsing"
 test "parse rgb(255, 128, 0)" := do
   match Color.fromRgbString "rgb(255, 128, 0)" with
   | some c =>
-    ensure (approxEq c.r 1.0) "r should be 1.0"
-    ensure (approxEq c.g 0.502) "g should be ~0.502"
-    ensure (approxEq c.b 0.0) "b should be 0.0"
+    ensure (floatNear c.r 1.0 0.01) "r should be 1.0"
+    ensure (floatNear c.g 0.502 0.01) "g should be ~0.502"
+    ensure (floatNear c.b 0.0 0.01) "b should be 0.0"
   | none => ensure false "parsing failed"
 
 test "parse rgb with spaces" := do
   match Color.fromRgbString "rgb( 255 , 128 , 0 )" with
-  | some c => ensure (approxEq c.r 1.0) "r should be 1.0"
+  | some c => ensure (floatNear c.r 1.0 0.01) "r should be 1.0"
   | none => ensure false "parsing failed"
 
 test "parse rgb with percentages" := do
   match Color.fromRgbString "rgb(100%, 50%, 0%)" with
   | some c =>
-    ensure (approxEq c.r 1.0) "r should be 1.0"
-    ensure (approxEq c.g 0.5) "g should be 0.5"
-    ensure (approxEq c.b 0.0) "b should be 0.0"
+    ensure (floatNear c.r 1.0 0.01) "r should be 1.0"
+    ensure (floatNear c.g 0.5 0.01) "g should be 0.5"
+    ensure (floatNear c.b 0.0 0.01) "b should be 0.0"
   | none => ensure false "parsing failed"
 
 test "parse rgba format" := do
   match Color.fromRgbaString "rgba(255, 128, 0, 0.5)" with
   | some c =>
-    ensure (approxEq c.r 1.0) "r should be 1.0"
-    ensure (approxEq c.a 0.5) "a should be 0.5"
+    ensure (floatNear c.r 1.0 0.01) "r should be 1.0"
+    ensure (floatNear c.a 0.5 0.01) "a should be 0.5"
   | none => ensure false "parsing failed"
 
 test "invalid rgb returns none" :=
@@ -123,8 +119,8 @@ test "parse auto-detects rgb" := do
 test "parse auto-detects rgba" := do
   match Color.parse "rgba(0, 0, 255, 0.5)" with
   | some c =>
-    ensure (approxEq c.b 1.0) "b should be 1.0"
-    ensure (approxEq c.a 0.5) "a should be 0.5"
+    ensure (floatNear c.b 1.0 0.01) "b should be 1.0"
+    ensure (floatNear c.a 0.5 0.01) "a should be 0.5"
   | none => ensure false "parsing failed"
 
 testSuite "Hex Formatting"

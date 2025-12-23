@@ -10,10 +10,6 @@ namespace TinctureTests.HarmonyTests
 open Crucible
 open Tincture
 
-/-- Helper to check if two floats are approximately equal. -/
-def approxEq (a b : Float) (epsilon : Float := 0.02) : Bool :=
-  Float.abs (a - b) < epsilon
-
 testSuite "Hue Rotation"
 
 test "rotating by 0 returns same hue" := do
@@ -21,7 +17,7 @@ test "rotating by 0 returns same hue" := do
   let rotated := Color.rotateHue c 0.0
   let origHsl := HSL.fromColor c
   let newHsl := HSL.fromColor rotated
-  ensure (approxEq origHsl.h newHsl.h) "hue should be unchanged"
+  ensure (floatNear origHsl.h newHsl.h 0.02) "hue should be unchanged"
 
 test "rotating by 0.5 gives complementary" := do
   let c := Color.red
@@ -29,28 +25,28 @@ test "rotating by 0.5 gives complementary" := do
   let origHsl := HSL.fromColor c
   let newHsl := HSL.fromColor rotated
   let diff := Float.abs (newHsl.h - origHsl.h)
-  ensure (approxEq diff 0.5) "hue diff should be 0.5"
+  ensure (floatNear diff 0.5 0.02) "hue diff should be 0.5"
 
 test "rotating by 1 wraps around" := do
   let c := Color.red
   let rotated := Color.rotateHue c 1.0
   let origHsl := HSL.fromColor c
   let newHsl := HSL.fromColor rotated
-  ensure (approxEq origHsl.h newHsl.h) "hue should wrap around"
+  ensure (floatNear origHsl.h newHsl.h 0.02) "hue should wrap around"
 
 testSuite "Complementary Colors"
 
 test "red's complement is cyan-ish" := do
   let comp := Color.complementary Color.red
   let compHsl := HSL.fromColor comp
-  ensure (approxEq compHsl.h 0.5) "complement should be ~0.5"
+  ensure (floatNear compHsl.h 0.5 0.02) "complement should be ~0.5"
 
 test "complementary of complementary is original" := do
   let c := Color.rgb 0.5 0.3 0.7
   let double := Color.complementary (Color.complementary c)
   let origHsl := HSL.fromColor c
   let doubleHsl := HSL.fromColor double
-  ensure (approxEq origHsl.h doubleHsl.h) "double complement should match original"
+  ensure (floatNear origHsl.h doubleHsl.h 0.02) "double complement should match original"
 
 testSuite "Split Complementary"
 
@@ -67,7 +63,7 @@ test "split colors are symmetric around complement" := do
   let rightHsl := HSL.fromColor right
   let leftDist := Float.abs (leftHsl.h - 0.5)
   let rightDist := Float.abs (rightHsl.h - 0.5)
-  ensure (approxEq leftDist rightDist) "distances should be equal"
+  ensure (floatNear leftDist rightDist 0.02) "distances should be equal"
 
 testSuite "Triadic Colors"
 
@@ -82,8 +78,8 @@ test "triadic colors are equally spaced" := do
   let (c1, c2) := Color.triadic Color.red
   let h1 := (HSL.fromColor c1).h
   let h2 := (HSL.fromColor c2).h
-  ensure (approxEq h1 (1.0/3.0)) "h1 should be 1/3"
-  ensure (approxEq h2 (2.0/3.0)) "h2 should be 2/3"
+  ensure (floatNear h1 (1.0/3.0) 0.02) "h1 should be 1/3"
+  ensure (floatNear h2 (2.0/3.0) 0.02) "h2 should be 2/3"
 
 testSuite "Square Colors"
 
@@ -96,9 +92,9 @@ test "square colors are 90 degrees apart" := do
   let h1 := (HSL.fromColor sq[0]!).h
   let h2 := (HSL.fromColor sq[1]!).h
   let h3 := (HSL.fromColor sq[2]!).h
-  ensure (approxEq h1 0.25) "h1 should be 0.25"
-  ensure (approxEq h2 0.5) "h2 should be 0.5"
-  ensure (approxEq h3 0.75) "h3 should be 0.75"
+  ensure (floatNear h1 0.25 0.02) "h1 should be 0.25"
+  ensure (floatNear h2 0.5 0.02) "h2 should be 0.5"
+  ensure (floatNear h3 0.75 0.02) "h3 should be 0.75"
 
 testSuite "Analogous Colors"
 
@@ -127,7 +123,7 @@ test "monochromatic preserves hue" := do
   let palette := Color.monochromatic Color.red 5
   let redHue := (HSL.fromColor Color.red).h
   for c in palette do
-    ensure (approxEq (HSL.fromColor c).h redHue) "hue should be preserved"
+    ensure (floatNear (HSL.fromColor c).h redHue 0.02) "hue should be preserved"
 
 test "monochromatic varies lightness" := do
   let palette := Color.monochromatic Color.red 5

@@ -5,10 +5,12 @@
 
 import Tincture
 import Plausible
+import Crucible
 
 namespace TinctureTests.PropertyTests
 
 open Plausible
+open Crucible
 open Tincture
 
 /-! ## Random Generators for Tincture Types -/
@@ -58,17 +60,11 @@ instance : Shrinkable Color where
     let as := shrinkComponent c.a |>.map fun a => Color.rgba c.r c.g c.b a
     rs ++ gs ++ bs ++ as
 
-/-! ## Helper Functions -/
-
-/-- Check if two floats are approximately equal. -/
-def approxEq (a b : Float) (epsilon : Float := 0.01) : Bool :=
-  Float.abs (a - b) < epsilon
-
 /-- Check if two colors are approximately equal. -/
 def colorApproxEq (c1 c2 : Color) (epsilon : Float := 0.02) : Bool :=
-  approxEq c1.r c2.r epsilon &&
-  approxEq c1.g c2.g epsilon &&
-  approxEq c1.b c2.b epsilon
+  floatNear c1.r c2.r epsilon &&
+  floatNear c1.g c2.g epsilon &&
+  floatNear c1.b c2.b epsilon
 
 /-! ## Property Tests -/
 
@@ -96,7 +92,7 @@ def colorApproxEq (c1 c2 : Color) (epsilon : Float := 0.02) : Bool :=
 #test ∀ (c1 c2 : Color),
   let r1 := Color.contrastRatio c1 c2
   let r2 := Color.contrastRatio c2 c1
-  approxEq r1 r2
+  floatNear r1 r2 0.01
 
 -- contrast ratio is always >= 1
 #test ∀ (c1 c2 : Color),
@@ -132,7 +128,7 @@ def colorApproxEq (c1 c2 : Color) (epsilon : Float := 0.02) : Bool :=
 -- difference of color with itself is black
 #test ∀ (c : Color),
   let diff := Color.blend .difference c c
-  approxEq diff.r 0.0 ∧ approxEq diff.g 0.0 ∧ approxEq diff.b 0.0
+  floatNear diff.r 0.0 0.01 ∧ floatNear diff.g 0.0 0.01 ∧ floatNear diff.b 0.0 0.01
 
 -- hex roundtrip preserves color
 #test ∀ (c : Color),
@@ -152,13 +148,13 @@ def colorApproxEq (c1 c2 : Color) (epsilon : Float := 0.02) : Bool :=
 -- deltaE of color with itself is zero
 #test ∀ (c : Color),
   let de := Color.deltaE2000 c c
-  approxEq de 0.0 0.001
+  floatNear de 0.0 0.001
 
 -- deltaE is symmetric
 #test ∀ (c1 c2 : Color),
   let de1 := Color.deltaE2000 c1 c2
   let de2 := Color.deltaE2000 c2 c1
-  approxEq de1 de2 0.001
+  floatNear de1 de2 0.001
 
 -- deltaE is always non-negative
 #test ∀ (c1 c2 : Color),

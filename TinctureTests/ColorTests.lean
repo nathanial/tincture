@@ -10,16 +10,12 @@ namespace TinctureTests.ColorTests
 open Crucible
 open Tincture
 
-/-- Helper to check if two floats are approximately equal. -/
-def approxEq (a b : Float) (epsilon : Float := 0.001) : Bool :=
-  Float.abs (a - b) < epsilon
-
 /-- Helper to check if two colors are approximately equal. -/
 def colorApproxEq (c1 c2 : Color) (epsilon : Float := 0.001) : Bool :=
-  approxEq c1.r c2.r epsilon &&
-  approxEq c1.g c2.g epsilon &&
-  approxEq c1.b c2.b epsilon &&
-  approxEq c1.a c2.a epsilon
+  floatNear c1.r c2.r epsilon &&
+  floatNear c1.g c2.g epsilon &&
+  floatNear c1.b c2.b epsilon &&
+  floatNear c1.a c2.a epsilon
 
 testSuite "Color Core"
 
@@ -45,9 +41,9 @@ test "rgb constructor sets alpha to 1" := do
 
 test "fromRgb8 converts correctly" := do
   let c := Color.fromRgb8 255 128 0
-  ensure (approxEq c.r 1.0) "r should be 1.0"
-  ensure (approxEq c.g 0.502) "g should be ~0.502"
-  ensure (approxEq c.b 0.0) "b should be 0.0"
+  ensure (floatNear c.r 1.0 0.001) "r should be 1.0"
+  ensure (floatNear c.g 0.502 0.001) "g should be ~0.502"
+  ensure (floatNear c.b 0.0 0.001) "b should be 0.0"
 
 test "toRgb8 converts correctly" := do
   let c := Color.rgb 1.0 0.5 0.0
@@ -111,16 +107,16 @@ test "lerp at t=1 returns second color" := do
 
 test "lerp at t=0.5 returns midpoint" := do
   let c := Color.lerp Color.black Color.white 0.5
-  ensure (approxEq c.r 0.5) "r should be 0.5"
-  ensure (approxEq c.g 0.5) "g should be 0.5"
-  ensure (approxEq c.b 0.5) "b should be 0.5"
+  ensure (floatNear c.r 0.5 0.001) "r should be 0.5"
+  ensure (floatNear c.g 0.5 0.001) "g should be 0.5"
+  ensure (floatNear c.b 0.5 0.001) "b should be 0.5"
 
 test "premultiply multiplies RGB by alpha" := do
   let c := (Color.rgb 1.0 0.5 0.25).withAlpha 0.5
   let pm := c.premultiply
-  ensure (approxEq pm.r 0.5) "r should be 0.5"
-  ensure (approxEq pm.g 0.25) "g should be 0.25"
-  ensure (approxEq pm.b 0.125) "b should be 0.125"
+  ensure (floatNear pm.r 0.5 0.001) "r should be 0.5"
+  ensure (floatNear pm.g 0.25 0.001) "g should be 0.25"
+  ensure (floatNear pm.b 0.125 0.001) "b should be 0.125"
 
 test "unpremultiply reverses premultiply" := do
   let c := (Color.rgb 0.8 0.4 0.2).withAlpha 0.5

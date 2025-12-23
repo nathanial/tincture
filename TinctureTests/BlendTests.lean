@@ -10,15 +10,11 @@ namespace TinctureTests.BlendTests
 open Crucible
 open Tincture
 
-/-- Helper to check if two floats are approximately equal. -/
-def approxEq (a b : Float) (epsilon : Float := 0.01) : Bool :=
-  Float.abs (a - b) < epsilon
-
 /-- Helper to check if two colors are approximately equal. -/
 def colorApproxEq (c1 c2 : Color) (epsilon : Float := 0.01) : Bool :=
-  approxEq c1.r c2.r epsilon &&
-  approxEq c1.g c2.g epsilon &&
-  approxEq c1.b c2.b epsilon
+  floatNear c1.r c2.r epsilon &&
+  floatNear c1.g c2.g epsilon &&
+  floatNear c1.b c2.b epsilon
 
 testSuite "Blend Modes"
 
@@ -34,9 +30,9 @@ test "multiply with white is identity" := do
 test "multiply with black is black" := do
   let c := Color.rgb 0.5 0.3 0.7
   let result := Color.blend .multiply c Color.black
-  ensure (approxEq result.r 0.0) "r should be 0"
-  ensure (approxEq result.g 0.0) "g should be 0"
-  ensure (approxEq result.b 0.0) "b should be 0"
+  ensure (floatNear result.r 0.0 0.01) "r should be 0"
+  ensure (floatNear result.g 0.0 0.01) "g should be 0"
+  ensure (floatNear result.b 0.0 0.01) "b should be 0"
 
 test "multiply is commutative" := do
   let c1 := Color.rgb 0.5 0.3 0.7
@@ -53,9 +49,9 @@ test "screen with black is identity" := do
 test "screen with white is white" := do
   let c := Color.rgb 0.5 0.3 0.7
   let result := Color.blend .screen c Color.white
-  ensure (approxEq result.r 1.0) "r should be 1"
-  ensure (approxEq result.g 1.0) "g should be 1"
-  ensure (approxEq result.b 1.0) "b should be 1"
+  ensure (floatNear result.r 1.0 0.01) "r should be 1"
+  ensure (floatNear result.g 1.0 0.01) "g should be 1"
+  ensure (floatNear result.b 1.0 0.01) "b should be 1"
 
 test "screen is commutative" := do
   let c1 := Color.rgb 0.5 0.3 0.7
@@ -68,30 +64,30 @@ test "darken returns minimum per channel" := do
   let c1 := Color.rgb 0.8 0.2 0.5
   let c2 := Color.rgb 0.3 0.9 0.5
   let result := Color.blend .darken c1 c2
-  ensure (approxEq result.r 0.3) "r should be min"
-  ensure (approxEq result.g 0.2) "g should be min"
-  ensure (approxEq result.b 0.5) "b should be min"
+  ensure (floatNear result.r 0.3 0.01) "r should be min"
+  ensure (floatNear result.g 0.2 0.01) "g should be min"
+  ensure (floatNear result.b 0.5 0.01) "b should be min"
 
 test "lighten returns maximum per channel" := do
   let c1 := Color.rgb 0.8 0.2 0.5
   let c2 := Color.rgb 0.3 0.9 0.5
   let result := Color.blend .lighten c1 c2
-  ensure (approxEq result.r 0.8) "r should be max"
-  ensure (approxEq result.g 0.9) "g should be max"
-  ensure (approxEq result.b 0.5) "b should be max"
+  ensure (floatNear result.r 0.8 0.01) "r should be max"
+  ensure (floatNear result.g 0.9 0.01) "g should be max"
+  ensure (floatNear result.b 0.5 0.01) "b should be max"
 
 test "difference of same color is black" := do
   let c := Color.rgb 0.5 0.3 0.7
   let result := Color.blend .difference c c
-  ensure (approxEq result.r 0.0) "r should be 0"
-  ensure (approxEq result.g 0.0) "g should be 0"
-  ensure (approxEq result.b 0.0) "b should be 0"
+  ensure (floatNear result.r 0.0 0.01) "r should be 0"
+  ensure (floatNear result.g 0.0 0.01) "g should be 0"
+  ensure (floatNear result.b 0.0 0.01) "b should be 0"
 
 test "exclusion of gray 0.5 with itself" := do
   let c := Color.rgb 0.5 0.5 0.5
   let result := Color.blend .exclusion c c
   -- exclusion(0.5, 0.5) = 0.5 + 0.5 - 2*0.5*0.5 = 0.5
-  ensure (approxEq result.r 0.5) "exclusion of 0.5 with itself should be 0.5"
+  ensure (floatNear result.r 0.5 0.01) "exclusion of 0.5 with itself should be 0.5"
 
 testSuite "Blend Shorthand Functions"
 
@@ -99,14 +95,14 @@ test "multiply shorthand works" := do
   let c1 := Color.rgb 0.5 0.5 0.5
   let c2 := Color.rgb 0.5 0.5 0.5
   let result := Color.multiply c1 c2
-  ensure (approxEq result.r 0.25) "multiply 0.5 * 0.5 = 0.25"
+  ensure (floatNear result.r 0.25 0.01) "multiply 0.5 * 0.5 = 0.25"
 
 test "screen shorthand works" := do
   let c1 := Color.rgb 0.5 0.5 0.5
   let c2 := Color.rgb 0.5 0.5 0.5
   let result := Color.screen c1 c2
   -- screen(0.5, 0.5) = 1 - (1-0.5)(1-0.5) = 0.75
-  ensure (approxEq result.r 0.75) "screen(0.5, 0.5) = 0.75"
+  ensure (floatNear result.r 0.75 0.01) "screen(0.5, 0.5) = 0.75"
 
 test "overlay shorthand works" := do
   let c1 := Color.rgb 0.3 0.7 0.5
@@ -155,9 +151,9 @@ test "mix at 1 returns second color" := do
 
 test "mix at 0.5 returns midpoint" := do
   let result := Color.mix Color.black Color.white 0.5
-  ensure (approxEq result.r 0.5) "r should be 0.5"
-  ensure (approxEq result.g 0.5) "g should be 0.5"
-  ensure (approxEq result.b 0.5) "b should be 0.5"
+  ensure (floatNear result.r 0.5 0.01) "r should be 0.5"
+  ensure (floatNear result.g 0.5 0.01) "g should be 0.5"
+  ensure (floatNear result.b 0.5 0.01) "b should be 0.5"
 
 test "mixOkLab produces valid colors" := do
   let result := Color.mixOkLab Color.red Color.blue 0.5
@@ -173,14 +169,14 @@ test "hue blend transfers hue only" := do
   let result := Color.blend .hue base top
   let resultHsl := HSL.fromColor result
   let blueHsl := HSL.fromColor Color.blue
-  ensure (approxEq resultHsl.h blueHsl.h) "result should have blue's hue"
+  ensure (floatNear resultHsl.h blueHsl.h 0.01) "result should have blue's hue"
 
 test "saturation blend transfers saturation only" := do
   let base := Color.red
   let desaturated := Color.gray 0.5
   let result := Color.blend .saturation base desaturated
   let resultHsl := HSL.fromColor result
-  ensure (approxEq resultHsl.s 0.0) "result should have zero saturation"
+  ensure (floatNear resultHsl.s 0.0 0.01) "result should have zero saturation"
 
 test "luminosity blend transfers lightness only" := do
   let base := Color.red
