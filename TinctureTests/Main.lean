@@ -19,21 +19,14 @@ def main : IO UInt32 := do
   IO.println "============================"
   IO.println ""
 
-  let mut failed := false
-
-  if (← runTests "Color Core" TinctureTests.ColorTests.cases) != 0 then failed := true
-  if (← runTests "Color Spaces" TinctureTests.SpaceTests.cases) != 0 then failed := true
-  if (← runTests "Blend Modes" TinctureTests.BlendTests.cases) != 0 then failed := true
-  if (← runTests "WCAG Contrast" TinctureTests.ContrastTests.cases) != 0 then failed := true
-  if (← runTests "Color Harmony" TinctureTests.HarmonyTests.cases) != 0 then failed := true
-  if (← runTests "Parse/Format" TinctureTests.ParseFormatTests.cases) != 0 then failed := true
+  let result ← runAllSuites
   -- PropertyTests uses Plausible #test (runs at compile time)
 
   IO.println ""
   IO.println "============================"
   IO.println "(Property tests with Plausible run during compilation)"
 
-  if failed then
+  if result != 0 then
     IO.println "Some tests failed!"
     return 1
   else
