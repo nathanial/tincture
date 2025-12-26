@@ -4,21 +4,19 @@
 
 import Tincture
 import Crucible
+import Staple
 
 namespace TinctureTests.ParseFormatTests
 
 open Crucible
 open Tincture
+open Staple (String.containsSubstr)
 
 /-- Helper to check if two colors are approximately equal. -/
 def colorApproxEq (c1 c2 : Color) (epsilon : Float := 0.01) : Bool :=
   floatNear c1.r c2.r epsilon &&
   floatNear c1.g c2.g epsilon &&
   floatNear c1.b c2.b epsilon
-
-/-- Helper to check if a string contains a substring. -/
-def containsSubstr (s : String) (sub : String) : Bool :=
-  (s.splitOn sub).length > 1
 
 testSuite "Hex Parsing"
 
@@ -164,7 +162,7 @@ test "toRgbaString formats correctly" := do
 test "toHslString formats correctly" := do
   let s := Color.toHslString Color.red
   ensure (s.startsWith "hsl(") "should start with hsl("
-  ensure (containsSubstr s "100%") "should contain 100%"
+  ensure (String.containsSubstr s "100%") "should contain 100%"
 
 test "toHslaString includes alpha" := do
   let c := Color.red.withAlpha 0.5
@@ -189,7 +187,7 @@ test "toCssModern uses space-separated" := do
 test "toCssModern with alpha uses /" := do
   let c := Color.red.withAlpha 0.5
   let s := Color.toCssModern c
-  ensure (containsSubstr s "/") "should contain /"
+  ensure (String.containsSubstr s "/") "should contain /"
 
 testSuite "Debug String"
 
@@ -199,10 +197,10 @@ test "toDebugString includes Color prefix" := do
 
 test "toDebugString includes all components" := do
   let s := Color.toDebugString (Color.rgba 0.1 0.2 0.3 0.4)
-  ensure (containsSubstr s "r=") "should contain r="
-  ensure (containsSubstr s "g=") "should contain g="
-  ensure (containsSubstr s "b=") "should contain b="
-  ensure (containsSubstr s "a=") "should contain a="
+  ensure (String.containsSubstr s "r=") "should contain r="
+  ensure (String.containsSubstr s "g=") "should contain g="
+  ensure (String.containsSubstr s "b=") "should contain b="
+  ensure (String.containsSubstr s "a=") "should contain a="
 
 testSuite "ToString Instance"
 
