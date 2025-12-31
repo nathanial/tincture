@@ -9,6 +9,7 @@ namespace Tincture
 
 namespace Color
 
+-- TODO: Replace with Staple.Hex.hexCharToNat after staple release
 /-- Parse a single hex digit to value 0-15. -/
 private def hexDigitValue (c : Char) : Option UInt8 :=
   if c >= '0' && c <= '9' then some (c.toNat - '0'.toNat).toUInt8
