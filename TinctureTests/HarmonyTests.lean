@@ -215,6 +215,6 @@ test "harmonyOk returns same count as harmony" := do
     let h2 := Color.harmonyOk Color.red t
     h1.size ≡ h2.size
 
-#generate_tests
+
 
 end TinctureTests.HarmonyTests

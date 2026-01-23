@@ -190,6 +190,6 @@ test "linear values are less than sRGB for mid-tones" := do
   let linear := LinearRGB.fromColor (Color.gray 0.5)
   ensure (linear.r < 0.5) "linear 0.5 should be less than sRGB 0.5"
 
-#generate_tests
+
 
 end TinctureTests.SpaceTests

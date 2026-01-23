@@ -224,6 +224,6 @@ test "multiple format roundtrips" := do
     | some parsed => ensure (colorApproxEq parsed c 0.01) "roundtrip should preserve"
     | none => ensure false "parsing failed"
 
-#generate_tests
+
 
 end TinctureTests.ParseFormatTests

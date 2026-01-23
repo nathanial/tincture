@@ -170,6 +170,6 @@ test "same color has zero APCA contrast" := do
   let contrast := Color.apcaContrast (Color.gray 0.5) (Color.gray 0.5)
   ensure (floatNear contrast 0.0 1.0) "same color should have ~0 APCA"
 
-#generate_tests
+
 
 end TinctureTests.ContrastTests

@@ -130,6 +130,6 @@ test "gray creates correct gray" := do
   g.b ≡ 0.5
   g.a ≡ 1.0
 
-#generate_tests
+
 
 end TinctureTests.ColorTests

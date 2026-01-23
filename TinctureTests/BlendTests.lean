@@ -185,6 +185,6 @@ test "luminosity blend transfers lightness only" := do
   let resultHsl := HSL.fromColor result
   ensure (resultHsl.l < 0.3) "result should be dark"
 
-#generate_tests
+
 
 end TinctureTests.BlendTests
